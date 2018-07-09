@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的 -->
+<mapper namespace="com.fengqiao.mapper.OrderbillDao">
+
+    <!-- 添加数据 -->
+    <insert id="addOrderService" parameterType="com.fengqiao.entity.Orderbill">
+        insert into orderbill(orderid,expressType,deliverProvince,deliverCity,deliverCompany,deliverName,deliverTel,deliverAddress,consignerProvince,consignerCity,consignerCounty,consignerCompany,consignerName,consignerTel,consignerAddress,payMethod,custid,cargo,cargoName,cargoValue) 
+        value(#{orderid},#{expressType},#{deliverProvince},#{deliverCity},#{deliverCompany},#{deliverName},#{deliverTel},#{deliverAddress},#{consignerProvince},#{consignerCity},#{consignerCounty},#{consignerCompany},#{consignerName},#{consignerTel},#{consignerAddress},#{payMethod},#{custid},#{cargo},#{cargoName},#{cargoValue})
+    </insert>
+    
+    
+ 	<!-- 计算有多少记录  -->
+    <select id="getOrderbillCountSqlwhere" parameterType="com.fengqiao.entity.Orderbill" resultType="int">
+    	select count(*) from orderbill where 1=1
+    	<if test="orderid != null and orderid !=''">        	
+        	and orderid = #{orderid}
+        </if>
+        <if test="deliverCompany != null and deliverCompany !=''">        	
+        	and deliverCompany = #{deliverCompany}
+        </if>
+        <if test="deliverName != null and deliverName !=''">        	
+        	and deliverName = #{deliverName}
+        </if>
+    </select>
+      
+    <!-- 分页+判断条件  -->
+	<select id="getOrderbillPagerContent" resultType="com.fengqiao.entity.Orderbill">
+        select * from orderbill where 1=1
+        <if test="orderid != null and orderid !=''">        	
+        	 and orderid = #{orderid}
+        </if>
+        <if test="deliverCompany != null and deliverCompany !=''">        	
+        	 and deliverCompany = #{deliverCompany}
+        </if>
+         <!-- and id>= (select id FROM waybill ORDER BY id LIMIT #{rowStart}, 1) LIMIT #{pageSize} --> 
+         limit #{rowStart},#{pageSize}   
+    </select>
+    
+</mapper>

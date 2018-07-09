@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的 -->
+<mapper namespace="com.fengqiao.mapper.WaybillDao">
+    <!-- 创建表 >
+    <update id="createTable" parameterType="String">
+        create table ${tableName} (id int primary key auto_increment,name varchar(20),age int)
+    </update-->
+    
+    <!-- 添加数据 -->
+    <insert id="add" parameterType="com.fengqiao.entity.Waybill">
+        insert into waybill(mailNo,returnTrackingNo) value(#{mailNo},#{returnTrackingNo})
+    </insert>
+    
+    <!-- 根据id删除数据 -->
+    <delete id="del" parameterType="int">
+        delete from waybill where id = #{id}
+    </delete>
+    
+    <!-- 删除所有数据  -->
+     <delete id="delall">
+        delete from waybill
+    </delete>
+    
+    <!-- 修改数据 -->
+    <update id="update" parameterType="com.fengqiao.entity.Waybill">
+        update waybill
+        <trim prefix="set" suffixOverrides=",">
+        <if test="deliverCompany != null and deliverCompany !=''">
+        deliverCompany=#{deliverCompany}, 
+        </if>
+        <if test="deliverName != null and deliverName !=''">
+        deliverName=#{deliverName}
+        </if>
+        <if test="deliverTel != null and deliverTel !=''">
+        deliverTel=#{deliverTel}
+        </if>
+        </trim>
+        where id=#{id}
+    </update>
+    
+    <!--根据id查询得到一个Waybill对象getWaybill -->
+    <select id="getWaybill" parameterType="int" 
+        resultType="com.fengqiao.entity.Waybill">
+        select * from waybill where id=#{id}
+    </select>
+    
+    <!-- 计算有多少记录  -->
+    <select id="getCountSqlwhere" parameterType="com.fengqiao.entity.Waybill" resultType="int">
+    	select count(*) from waybill where 1=1
+    	<if test="mailNo != null and mailNo !=''">        	
+        	and mailNo = #{mailNo}
+        </if>
+        <if test="deliverCompany != null and deliverCompany !=''">        	
+        	and deliverCompany = #{deliverCompany}
+        </if>
+        <if test="deliverName != null and deliverName !=''">        	
+        	and deliverName = #{deliverName}
+        </if>
+    </select>
+    
+    <!-- 查询所有的数据 -->
+    <select id="getWaybillList" resultType="com.fengqiao.entity.Waybill">
+        select * from waybill       
+    </select>
+    
+    <!-- 批量插入 -->
+    <insert id="insertBatch">
+    	INSERT INTO waybill(mailNo,returnTrackingNo,deliverCompany,deliverName,deliverTel,deliverMobile,deliverShipperCode,deliverCountry,deliverProvince)VALUES
+    	<foreach collection ="list" item="waybill" separator =",">
+         	(#{waybill.mailNo},#{waybill.returnTrackingNo},#{waybill.deliverCompany},#{waybill.deliverName},#{waybill.deliverTel},#{waybill.deliverMobile},#{waybill.deliverShipperCode},#{waybill.deliverCountry},#{waybill.deliverProvince})
+    	</foreach>
+	</insert>
+	
+	<!-- 分页  -->
+	<select id="getWaybillPager" resultType="com.fengqiao.entity.Waybill">
+        select * from waybill where id >= (select id FROM waybill ORDER BY id LIMIT #{0}, 1) LIMIT #{1}       
+    </select>
+	
+	<!-- 分页+判断条件  -->
+	<select id="getWaybillPagerContent" resultType="com.fengqiao.entity.Waybill">
+        select * from waybill where 1=1
+        <if test="mailNo != null and mailNo !=''">        	
+        	 and mailNo = #{mailNo}
+        </if>
+        <if test="returnTrackingNo != null and returnTrackingNo !=''">        	
+        	 and returnTrackingNo = #{returnTrackingNo}
+        </if>
+        <if test="deliverCompany != null and deliverCompany !=''">        	
+        	 and deliverCompany = #{deliverCompany}
+        </if>
+         <!-- and id>= (select id FROM waybill ORDER BY id LIMIT #{rowStart}, 1) LIMIT #{pageSize} --> 
+         limit #{rowStart},#{pageSize}   
+    </select>
+	
+	<!-- 判断条件搜索  -->
+	<select id="getWaybillSqlWhere" resultType="com.fengqiao.entity.Waybill">
+        select * from waybill       
+        	where 1=1
+        <if test="mailNo != null and mailNo !=''">        	
+        	and mailNo = #{mailNo}	
+        </if> 
+        <if test="deliverCompany != null and deliverCompany !=''">
+        	and deliverCompany = #{deliverCompany}	
+        </if>       
+    </select>
+	
+	<!-- 存储过程   -->
+	<select id="getWaybillProcedure" statementType="CALLABLE" parameterType="com.fengqiao.entity.Waybill" resultType="com.fengqiao.entity.Waybill">
+        <![CDATA[  
+    		{call getWaybillByid
+    		(
+    		#{id},
+    		#{mailNo}
+    		)}  
+		]]>  
+    </select>
+</mapper>

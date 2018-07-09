@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>下单</title>
+<style type="text/css">
+	body{
+		margin: 0px;
+		font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+		overflow-x:hidden;
+	}
+	.billquery,#btn,#file{
+    	background-color: rgba(157, 157, 157, 0.79);
+    	border: none;
+    	color: white;
+    	padding: 4px 15px;
+    	text-align: center;
+    	text-decoration: none;
+    	font-size: 16px;
+    	margin: 4px 2px;
+    	cursor: pointer;
+    	border-radius: 12px;
+	}
+</style>
+</head>
+<body>
+	<!-- 引入head页面 -->
+	<div th:include="head :: headContent"></div>
+	<form name="form1" action="orderbatch" method="post" enctype="multipart/form-data">
+		<table style="text-align: center;margin:auto;margin-top: 20px;">
+			<tr>
+				<td>
+					<input class="input-prepend" type="file" name="file" id="file" multiple="multiple">
+				</td>
+				<td>
+					<input type="submit" id="btn" value="导入excel" onclick="return check()">
+				</td>
+			</tr>
+		</table>
+	</form>
+	<div class="tableContent" style="text-align: center;margin:auto;margin-top: 20px;"></div>
+	<!-- 下订单分页列表 -->
+  	<div style="padding-top: 10px;width:75%;margin:auto;display:none;margin-left: 35%;" id="pager">
+		<button class="billquery" id="billshouye" style="cursor: pointer;">首页</button>
+		<button class="billquery" id="billfront" style="cursor: pointer;">上一页</button>
+		<button class="billquery" id="billnext" style="cursor: pointer;">下一页</button>
+		<button class="billquery" id="billweiye" style="cursor: pointer;">尾页</button>
+		&nbsp;
+		<label class="billdangqian"></label>
+		<label class="billgong"></label>
+		<label class="billNum"></label>
+	</div>	
+  	<div style="display: none;">
+		<input type="text" id="billcountPage" value="15"></input>
+		<input type="text" id="billcurrentPage" value="1"></input>
+	</div>
+</body>
+<script th:src="@{/js/jquery-3.1.0.min.js}"></script>
+<script type="text/javascript">
+$(function(){
+	pager();
+});
+
+//分页
+function pager(){
+	var billList = "";
+	var billTitle = "<tr style='background-color:grey;color:white;'><td>订单号</td><td>寄件人</td><td>寄方电话</td><td>寄方地址</td><td>寄方公司</td><td>收件人</td><td>收件电话</td><td>收件公司</td><td>月结卡号</td><td>货物</td></tr>";
+	$.ajax({
+		url:"/orderListByPager",
+		type:"post",
+		data:{currentPage:$("#billcurrentPage").val()},
+		success :function(result){
+			$("#pager").show();
+			$("#billcountPage").val(result[0].billcountPage);
+			$("#billcurrentPage").val(result[0].billcurrentPage);
+			$.each(result[0].data, function (i, n)
+			{
+				billList = billList+"<tr><td>"+n.orderid+"</td><td>"+n.deliverName+"</td><td>"+n.deliverTel+"</td><td>"+n.deliverProvince+n.deliverCity+n.deliverAddress+"</td><td>"+n.deliverCompany+"</td><td>"+n.consignerName+"</td><td>"+n.consignerTel+"</td><td>"+n.consignerCompany+"</td><td>"+n.custid+"</td><td>"+n.cargo+"</td></tr>";	
+			});
+			billList = billTitle+billList;
+			$(".tableContent").html("<table border=1 style='width:85%;margin:auto;'>"+billList+"</table>");
+      		$(".billdangqian").html("当前第:"+result[0].billcurrentPage+"页");
+      		$(".billgong").html("共:"+result[0].billcountPage+"页");
+      		$(".billNum").html("共:"+result[0].billNum+"条记录");
+		}
+	});
+}
+
+//查询
+
+//首页、上一页、下一页、尾页 
+$(".billquery").click(function(){
+	//alert($(this).attr("id"));
+	if($(this).attr("id")=="billshouye"){
+		$("#billcurrentPage").val(1);
+	}else if($(this).attr("id")=="billweiye"){
+		$("#billcurrentPage").val($("#billcountPage").val());
+	}else if($(this).attr("id")=="billfront"){
+		var ye = parseInt($("#billcurrentPage").val())-1;
+		if(ye-1<0){
+			alert("已经是第一页");
+			return false;
+		}
+		$("#billcurrentPage").val(ye);
+	}else if($(this).attr("id")=="billnext"){
+		var ye = parseInt($("#billcurrentPage").val())+1;
+		var count = parseInt($("#billcountPage").val());
+		if(ye>count){
+			alert("已经是最后一页");
+			return false;
+		}
+		$("#billcurrentPage").val(ye);
+	}
+	pager();
+}); 
+
+//检查上传文件名是否为空
+function check(){
+	var name = $("#file").val();
+	console.log(name);
+	if(name==""){
+		alert("请先选择文件再导入~~");
+		return false;
+	}else{
+		$("#inserting").text("");
+		return true;
+	}
+}
+</script>
+</html>

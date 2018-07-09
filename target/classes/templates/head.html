@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<header th:fragment="headContent">
+<body>
+	<div id="headbar" style="height: 80px;background-color: #0c4270;color:white;border-bottom:1px solid #235c8c;">
+		<span style="margin-left: 80px;font-size: 18px;position: absolute;">顺丰速运</span>
+		<img th:src="@{/img/sfLogo.png}" style="width: 80px;height: 80px;"></img>
+		<!--span style="margin-left: 78%;font-size: 15px;margin-top: 10px;position: absolute;">
+			<a style="cursor: pointer;color: orange;" href="/login">退出</a>
+		</span-->
+	</div>
+</body>
+</header>
+</html>

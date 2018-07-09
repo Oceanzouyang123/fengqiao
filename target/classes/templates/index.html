@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style type="text/css">
+	body{
+		margin: 0px;
+		font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+	}
+</style>
+</head>
+<body>
+	<!-- 引入head页面 -->
+	<div th:include="head :: headContent"></div>
+	<form name="form1" action="batch" method="post" enctype="multipart/form-data">
+		<table style="text-align: center;margin:auto;margin-top: 20px;">
+			<tr>
+				<td>
+					<input class="input-prepend" type="file" name="file" id="file" multiple="multiple">
+				</td>
+				<td>
+					<input type="submit" id="btn" value="导入excel" onclick="return check()">
+				</td>
+			</tr>
+		</table>
+	</form>	
+	<div style="text-align: center;margin:auto;margin-top: 20px;"></div>
+</body>
+<script th:src="@{/js/jquery-3.1.0.min.js}"></script>
+<script type="text/javascript">
+$(function(){
+	
+});
+
+//检查上传文件名是否为空
+function check(){
+	var name = $("#file").val();
+	console.log(name);
+	if(name==""){
+		alert("请先选择文件再导入~~");
+		return false;
+	}else{
+		$("#inserting").text("");
+		return true;
+	}
+}
+</script>
+</html>

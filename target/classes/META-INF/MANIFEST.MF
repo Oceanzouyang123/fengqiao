@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: fengqiao
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: 01375042
+Implementation-Vendor-Id: com.fengqiao
+Build-Jdk: 1.8.0_161
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/fengqiao
+Created-By: Maven Integration for Eclipse
+
